@@ -9,6 +9,7 @@ import { Text } from 'react-native';
 
 import HomeScreen from '../screens/HomeScreen';
 import MatchResultsScreen from '../screens/MatchResultsScreen';
+import PreviewScreen from '../screens/PreviewScreen';
 import HerdBookScreen from '../screens/HerdBookScreen';
 import CowProfileScreen from '../screens/CowProfileScreen';
 import CowDexScreen from '../screens/CowDexScreen';
@@ -19,6 +20,7 @@ import { COLORS } from '../theme';
 
 export type RootStackParamList = {
   MainTabs: undefined;
+  Preview: { photoUri: string };
   MatchResults: { photoUri: string };
   CowProfile: { cowId: string };
 };
@@ -68,6 +70,11 @@ export default function AppNavigator() {
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen name="MainTabs" component={MainTabs} options={{ headerShown: false }} />
+        <Stack.Screen
+          name="Preview"
+          component={PreviewScreen}
+          options={{ headerShown: false }}
+        />
         <Stack.Screen
           name="MatchResults"
           component={MatchResultsScreen}

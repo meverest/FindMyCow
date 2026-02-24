@@ -2,13 +2,14 @@
 // Provides simple CRUD helpers for the core entities.
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Cow, Sighting, Farm, Field } from './models';
+import { Cow, Image, Sighting, Farm, Field } from './models';
 
 const KEYS = {
   COWS: 'findmycow:cows',
   FARMS: 'findmycow:farms',
   FIELDS: 'findmycow:fields',
   SIGHTINGS: 'findmycow:sightings',
+  CAPTURED_PHOTOS: 'findmycow:captured_photos',
 };
 
 // ─── Generic helpers ─────────────────────────────────────────────────────────
@@ -96,6 +97,18 @@ export async function saveField(field: Field): Promise<void> {
     fields.push(field);
   }
   await saveAll(KEYS.FIELDS, fields);
+}
+
+// ─── Captured Photos ─────────────────────────────────────────────────────────
+
+export async function getCapturedPhotos(): Promise<Image[]> {
+  return getAll<Image>(KEYS.CAPTURED_PHOTOS);
+}
+
+export async function saveCapturedPhoto(photo: Image): Promise<void> {
+  const photos = await getCapturedPhotos();
+  photos.unshift(photo); // newest first
+  await saveAll(KEYS.CAPTURED_PHOTOS, photos);
 }
 
 // ─── Seed / Reset ─────────────────────────────────────────────────────────────
