@@ -147,6 +147,69 @@ To integrate a real model, replace `identifyCow()` with:
 
 ---
 
+## Testing
+
+FindMyCow uses **Jest** (with the `jest-expo` preset) for unit and integration tests, **React Native Testing Library** for component testing, and **Detox** for end-to-end (E2E) tests.
+
+### Test commands
+
+| Command | Description |
+|---|---|
+| `npm test` | Run all unit and integration tests |
+| `npm run test:coverage` | Run tests and generate a coverage report in `coverage/` |
+| `npm run test:e2e:build` | Build the iOS debug app for E2E tests (requires macOS + Xcode) |
+| `npm run test:e2e` | Run Detox E2E tests against the built app |
+
+### Test structure
+
+```
+FindMyCow/
+├── __tests__/
+│   ├── utils.test.ts      # Unit tests for src/utils.ts helpers
+│   └── App.test.tsx       # Integration test for the App root component
+└── e2e/
+    ├── jest.config.js     # Jest config used by Detox's test runner
+    └── app.e2e.js         # Dummy E2E test — app launch & home screen check
+```
+
+### Unit tests (`__tests__/utils.test.ts`)
+
+Tests the pure utility functions in `src/utils.ts`:
+- `generateId` — uniqueness, format
+- `nowISO` — valid ISO 8601 output, timestamp accuracy
+- `formatDate` — empty input, valid date, invalid date
+
+### Integration tests (`__tests__/App.test.tsx`)
+
+Tests the `App` root component end-to-end within the Jest environment:
+- Renders without crashing
+- Async mock-data seeding completes and the state update settles correctly
+
+AsyncStorage is mocked with `@react-native-async-storage/async-storage/jest/async-storage-mock`; navigation is mocked to avoid native module dependencies.
+
+### E2E tests (`e2e/`)
+
+Detox-based end-to-end tests that run against a real simulator/emulator build:
+
+```bash
+# 1. Build the debug app (macOS + Xcode required)
+npm run test:e2e:build
+
+# 2. Run the E2E suite
+npm run test:e2e
+```
+
+The default configuration targets an **iOS Simulator (iPhone 15)**. See `.detoxrc.js` to configure an Android emulator instead.
+
+### CI / GitHub Actions
+
+Every pull request and push to `main` automatically triggers the **Tests** workflow (`.github/workflows/test.yml`):
+
+- **Unit & Integration** — runs on `ubuntu-latest`, executes `npm run test:coverage`, and uploads the coverage artifact.
+- **E2E** — runs on `macos-latest` (skipped for forked PRs), builds the iOS app, and executes the Detox suite.
+
+---
+
 ## Roadmap
 
 | Phase | Scope |
