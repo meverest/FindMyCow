@@ -143,7 +143,47 @@ To integrate a real model, replace `identifyCow()` with:
 
 1. Create a feature branch: `git checkout -b feat/your-feature`
 2. Make changes and run `npx tsc --noEmit` to verify types
-3. Open a pull request against `main`
+3. Run `npm test` to ensure all tests pass
+4. Open a pull request against `main`
+
+---
+
+## Testing
+
+The project uses **Jest** with **jest-expo** and **React Native Testing Library** for unit and integration tests.
+
+### Run all tests
+
+```bash
+npm test
+```
+
+### Run tests with coverage report
+
+```bash
+npm run test:coverage
+```
+
+Coverage reports are saved to the `coverage/` directory.
+
+### Test structure
+
+| Path | What it tests |
+|---|---|
+| `__tests__/storage.test.ts` | AsyncStorage CRUD helpers (`getCows`, `saveCow`, `deleteCow`, …) |
+| `__tests__/CowDexScreen.test.tsx` | CowDex screen rendering, achievements, and progress display |
+| `__tests__/HomeScreen.test.tsx` | Home/camera screen with permission states |
+
+### Mocks
+
+| Path | Purpose |
+|---|---|
+| `__mocks__/@react-native-async-storage/async-storage.ts` | In-memory AsyncStorage mock |
+| `__mocks__/expo-camera.ts` | expo-camera mock (grants permission by default) |
+
+### CI
+
+Tests run automatically on every push and pull request via **GitHub Actions** (see `.github/workflows/test.yml`).
 
 ---
 
