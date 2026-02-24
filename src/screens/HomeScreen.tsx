@@ -25,12 +25,12 @@ export default function HomeScreen() {
   const [capturing, setCapturing] = useState(false);
   const cameraRef = useRef<CameraView>(null);
 
-  const handleIdentify = useCallback(async () => {
+  const handleCapture = useCallback(async () => {
     if (!cameraRef.current) return;
     setCapturing(true);
     try {
-      const photo = await cameraRef.current.takePictureAsync({ quality: 0.7 });
-      navigation.navigate('MatchResults', { photoUri: photo?.uri ?? '' });
+      const photo = await cameraRef.current.takePictureAsync({ quality: 0.85 });
+      navigation.navigate('Preview', { photoUri: photo?.uri ?? '' });
     } catch {
       Alert.alert('Error', 'Failed to capture photo. Please try again.');
     } finally {
@@ -64,17 +64,19 @@ export default function HomeScreen() {
       <CameraView ref={cameraRef} style={styles.camera} facing="back">
         {/* Overlay */}
         <View style={styles.overlay}>
-          <Text style={styles.hint}>Point at a cow and tap Identify</Text>
+          <Text style={styles.hint}>Centre the cow's face in the frame</Text>
+          {/* Guided rectangle */}
+          <View style={styles.guideFrame} />
           <TouchableOpacity
             style={[styles.captureBtn, capturing && styles.captureBtnDisabled]}
-            onPress={handleIdentify}
+            onPress={handleCapture}
             disabled={capturing}
-            accessibilityLabel="Identify cow"
+            accessibilityLabel="Capture photo"
           >
             {capturing ? (
               <ActivityIndicator color={COLORS.white} />
             ) : (
-              <Text style={styles.captureBtnText}>🔍 Identify</Text>
+              <Text style={styles.captureBtnText}>📷 Capture</Text>
             )}
           </TouchableOpacity>
         </View>
@@ -95,9 +97,18 @@ const styles = StyleSheet.create({
   },
   overlay: {
     flex: 1,
-    justifyContent: 'flex-end',
+    justifyContent: 'space-between',
     alignItems: 'center',
+    paddingTop: SPACING.xl + SPACING.lg,
     paddingBottom: SPACING.xl + SPACING.lg,
+  },
+  guideFrame: {
+    width: 260,
+    height: 200,
+    borderWidth: 2,
+    borderColor: 'rgba(255,255,255,0.7)',
+    borderRadius: RADIUS.md,
+    backgroundColor: 'transparent',
   },
   hint: {
     color: COLORS.white,
